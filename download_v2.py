@@ -28,11 +28,14 @@ if not CONVERT_TEMP_PATH.exists():
 
 COMMON_YDL_OPTS = {
     "quiet": True,
-    #"no_warnings": True,
-    "remote_components": ["ejs:github"],
-    "extractor_args": {"youtube": {"player_client": ["web"]}}
-}
+    "no_warnings": True,
 
+    "format": "(bv*[height<=1080]+ba/b)[ext=mp4]/b",
+
+    "concurrent_fragment_downloads": 5,
+
+    "merge_output_format": "mp4"
+}
 
 def convert(input_path: str, output_path: str):
     convert_videos(input_path, output_path)
@@ -78,8 +81,7 @@ def get_final_filename(url, output_folder):
     ydl_opts = {
         **COMMON_YDL_OPTS,
         "outtmpl": f"{output_folder}/%(title)s.%(ext)s",
-        "merge_output_format": "mp4",
-        "skip_download": True
+        "skip_download": True,
     }
 
     with YoutubeDL(ydl_opts) as ydl:
