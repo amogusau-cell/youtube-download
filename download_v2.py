@@ -11,6 +11,8 @@ ASK_BEFORE_DOWNLOAD = False
 DOWNLOAD = True
 CONVERT_VIDEOS = False
 
+JSON_PATH = "yt_links.json"
+
 DOWNLOAD_TEMP_PATH = Path("download_temp")
 VIDEO_PATH = Path("videos")
 CONVERT_TEMP_PATH = Path("converted_videos")
@@ -110,7 +112,7 @@ def download_video_with_srt(url, output_folder="vids"):
 
 
 if __name__ == "__main__":
-    with open("yt_links.json") as f:
+    with open(JSON_PATH) as f:
         youtube_videos = json.load(f)
 
     if SIZE_CHECK:

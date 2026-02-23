@@ -1,8 +1,8 @@
 **Description**
-Easily download youtube videos or playlists with ease.
+Easily download YouTube videos or playlists with ease.
 Playlist downloader will download videos that can be added to jellyfin as a show.
 
-Converting support in order to maximaze support for playing videos without transcoding.
+Converting support in order to maximize support for playing videos without transcoding.
 
 **How To Use**
 
@@ -30,7 +30,7 @@ Downloads all the videos in "JSON_PATH". Use with linksaver.py is recommended.
 
 Linksaver.py:
 
-Saves the copied links when a key combination is pressed. (For mac its command+B)
+Saves the copied links when a key combination is pressed. (For Mac its command+B)
 
 
 Prefix_adder.py:
@@ -40,4 +40,4 @@ Adds prefixes for every file in a folder.
 
 Subtitle.py:
 
-Seperates the subtitles from the video file.
+Separates the subtitles from the video file.
