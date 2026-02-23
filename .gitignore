@@ -3,3 +3,4 @@ download_temp/
 videos/
 .idea
 __pycache__/
+yt_links.json
