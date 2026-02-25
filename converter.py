@@ -25,13 +25,13 @@ BACKUP_ORIGINALS = False
 USE_HARDWARE_ENCODER = True
 
 # Max target resolution (downscale only if source exceeds)
-TARGET_MAX_WIDTH = 1920 * 2
-TARGET_MAX_HEIGHT = 1080 * 2
+TARGET_MAX_WIDTH = 1920
+TARGET_MAX_HEIGHT = 1080
 
 # Software (libx264) quality: lower CRF => higher quality/size (18 is visually near-lossless)
 DEFAULT_CRF = 18
 # Hardware target maxrate (effective ceiling for VBR hw encoders)
-HW_MAXRATE = "12M"
+HW_MAXRATE = "15M"
 HW_BUFSIZE = "24M"
 # Audio
 AUDIO_BITRATE = "128k"
@@ -144,12 +144,10 @@ def build_ffmpeg_cmd(input_path, output_path, encoder=None, force_scale=False, c
     # Choose video codec and quality strategy
     if encoder == 'h264_videotoolbox':
         # Videotoolbox tends to be less efficient than libx264: give it a higher ceiling
-        # Use a quality parameter (-q:v) and higher bitrate ceiling.
         cmd += ["-c:v","h264_videotoolbox",
                 "-pix_fmt","yuv420p",
                 "-profile:v","high",
                 "-level","4.1",
-                "-q:v","18",                 # quality hint (smaller = better). best-effort
                 "-b:v", HW_MAXRATE,
                 "-maxrate", HW_MAXRATE,
                 "-bufsize", HW_BUFSIZE]
