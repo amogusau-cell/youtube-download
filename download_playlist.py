@@ -3,7 +3,13 @@ import subprocess
 import json
 from tqdm import tqdm
 from pathlib import Path
-from download_v2 import get_video_size_bytes, convert, move, download_video_with_srt
+from download_v2 import (
+    get_video_size_bytes,
+    convert,
+    move,
+    download_video_with_srt,
+    build_cookie_ydl_opts,
+)
 import requests
 from yt_dlp import YoutubeDL
 
@@ -11,6 +17,7 @@ SIZE_CHECK = False
 ASK_BEFORE_DOWNLOAD = False
 DOWNLOAD = True
 CONVERT_VIDEOS = True
+COOKIES_FROM_BROWSER = "chrome:cookies.txt"
 
 PLAYLIST_URL = "https://www.youtube.com/playlist?list=PLYUI88BNN3JK_0HGANZP914caQLN2Sy56"
 
@@ -41,7 +48,8 @@ COMMON_YDL_OPTS = {
 
     "concurrent_fragment_downloads": 5,
 
-    "merge_output_format": "mp4"
+    "merge_output_format": "mp4",
+    **build_cookie_ydl_opts(COOKIES_FROM_BROWSER),
 }
 
 
@@ -127,7 +135,6 @@ def check_download(path: Path, filename: str):
 
 
 if __name__ == "__main__":
-
     playlist_opts = {
         **COMMON_YDL_OPTS,
         "extract_flat": True

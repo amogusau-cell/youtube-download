@@ -4,12 +4,14 @@ import json
 from tqdm import tqdm
 from converter import convert_videos
 import os
+import re
 from yt_dlp import YoutubeDL
 
 SIZE_CHECK = False
 ASK_BEFORE_DOWNLOAD = False
 DOWNLOAD = True
 CONVERT_VIDEOS = False
+COOKIES_FROM_BROWSER = "chrome:cookies.txt"
 
 JSON_PATH = "yt_links.json"
 
@@ -34,8 +36,49 @@ COMMON_YDL_OPTS = {
 
     "concurrent_fragment_downloads": 5,
 
-    "merge_output_format": "mp4"
+    "merge_output_format": "mp4",
 }
+
+
+def parse_cookies_from_browser(value: str):
+    match = re.fullmatch(
+        r"(?P<name>[^+:]+)(?:\+(?P<keyring>[^:]+))?(?::(?P<profile>[^:]+))?(?:::(?P<container>.+))?",
+        value.strip(),
+    )
+    if not match:
+        raise ValueError(
+            f"Invalid --cookies-from-browser value: {value!r}. "
+            "Expected BROWSER[+KEYRING][:PROFILE][::CONTAINER]"
+        )
+    browser = match.group("name").lower()
+    profile = match.group("profile")
+    keyring = match.group("keyring")
+    if keyring:
+        keyring = keyring.upper()
+    container = match.group("container")
+    return browser, profile, keyring, container
+
+
+def build_cookie_ydl_opts(value: str):
+    browser, profile, keyring, container = parse_cookies_from_browser(value)
+    opts = {
+        "cookiesfrombrowser": (browser, profile, keyring, container),
+    }
+    # Support values like "chrome:cookies.txt" by treating the profile part
+    # as a cookie file path and still extracting from the browser default profile.
+    if profile and Path(profile).suffix.lower() == ".txt":
+        opts["cookiesfrombrowser"] = (browser, None, keyring, container)
+        opts["cookiefile"] = profile
+    return opts
+
+
+def set_cookies_from_browser(value: str):
+    COMMON_YDL_OPTS.pop("cookiesfrombrowser", None)
+    COMMON_YDL_OPTS.pop("cookiefile", None)
+    COMMON_YDL_OPTS.update(build_cookie_ydl_opts(value))
+
+
+set_cookies_from_browser(COOKIES_FROM_BROWSER)
 
 def convert(input_path: str, output_path: str):
     convert_videos(input_path, output_path)

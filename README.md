@@ -41,3 +41,6 @@ Adds prefixes for every file in a folder.
 Subtitle.py:
 
 Separates the subtitles from the video file.
+
+Use this command to get cookies from the browser:
+yt-dlp --cookies-from-browser chrome --cookies cookies.txt
