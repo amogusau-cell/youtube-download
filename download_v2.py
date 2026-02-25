@@ -30,7 +30,7 @@ COMMON_YDL_OPTS = {
     "quiet": True,
     "no_warnings": True,
 
-    "format": "(bv*[height<=1080]+ba/b)[ext=mp4]/b",
+    "format": "bv*+ba/b",
 
     "concurrent_fragment_downloads": 5,
 

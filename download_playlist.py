@@ -37,7 +37,7 @@ COMMON_YDL_OPTS = {
     "quiet": False,
     "no_warnings": False,
 
-    "format": "(bv*[height<=1080]+ba/b)[ext=mp4]/b",
+    "format": "bv*+ba/b",
 
     "concurrent_fragment_downloads": 5,
 
@@ -144,7 +144,8 @@ if __name__ == "__main__":
     if SIZE_CHECK:
         total_size = 0
         for video in tqdm(videos, desc="Checking File Size"):
-            size = get_video_size_bytes(video["url"])
+            video_url = video.get("webpage_url") or video.get("url") or f"https://www.youtube.com/watch?v={video['id']}"
+            size = get_video_size_bytes(video_url)
             total_size += size
         print(f"\nTotal size: {total_size / 1024 / 1024 / 1024:.2f} GB")
 
@@ -155,8 +156,10 @@ if __name__ == "__main__":
         index = 0
         try:
             for video in tqdm(videos, desc="Downloading Videos"):
+                video_url = video.get("webpage_url") or video.get(
+                    "url") or f"https://www.youtube.com/watch?v={video['id']}"
 
-                temp_name = get_final_filename(video["url"], str(DOWNLOAD_TEMP_PATH))
+                temp_name = get_final_filename(video_url, str(DOWNLOAD_TEMP_PATH))
                 final_name = f"S01E{(index + 1):03} {temp_name}"
 
                 print(final_name)
@@ -166,7 +169,7 @@ if __name__ == "__main__":
                     index += 1
                     continue
 
-                download_video_with_srt(video["url"], str(DOWNLOAD_TEMP_PATH))
+                download_video_with_srt(video_url, str(DOWNLOAD_TEMP_PATH))
 
                 move_files = []
 
