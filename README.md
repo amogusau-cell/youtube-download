@@ -44,3 +44,15 @@ Separates the subtitles from the video file.
 
 Use this command to get cookies from the browser:
 yt-dlp --cookies-from-browser chrome --cookies cookies.txt
+
+**Known Issues**
+When pressing ctrl+c when yt-dlp is downloading a video the yt-dlp process stops but the script continues running.
+So it is recommended to stop the script when the conversation is happening instead of when the video is being downloaded.
+
+**Before Use**
+Make sure there is no other video or unfinished download file inside download_temp file.
+You can have the last unfinished download file but any other video file can break the script.
+For example
+
+yt-dlp downloads video A and there is video B inside download_temp the script will break.
+If there is video A's .part file then yt-dlp will automatically continue the download so it is fine.
