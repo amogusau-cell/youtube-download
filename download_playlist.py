@@ -1,6 +1,8 @@
 import random
 import subprocess
 import json
+import sys
+
 from tqdm import tqdm
 from pathlib import Path
 from download_v2 import (
@@ -18,6 +20,7 @@ ASK_BEFORE_DOWNLOAD = False
 DOWNLOAD = True
 CONVERT_VIDEOS = True
 COOKIES_FROM_BROWSER = "chrome:cookies.txt"
+RESTART_IF_FAILED = True
 
 PLAYLIST_URL = "https://www.youtube.com/playlist?list=PLYUI88BNN3JK_0HGANZP914caQLN2Sy56"
 
@@ -58,6 +61,11 @@ def get_index_from_title(title, videos):
         if title == video["title"]:
             return index
     return None
+
+def restart():
+    if RESTART_IF_FAILED:
+        subprocess.Popen([sys.executable] + sys.argv)
+        sys.exit()
 
 
 def get_video_duration(video_path):
@@ -181,10 +189,13 @@ if __name__ == "__main__":
                 move_files = []
 
                 if CONVERT_VIDEOS:
-                    convert(str(DOWNLOAD_TEMP_PATH), str(CONVERT_TEMP_PATH))
+                    if convert(str(DOWNLOAD_TEMP_PATH), str(CONVERT_TEMP_PATH)):
 
-                    files = [f for f in CONVERT_TEMP_PATH.iterdir()
-                             if f.is_file() and f.suffix.lower() in (VIDEO_EXTS | SUB_EXTS)]
+                        files = [f for f in CONVERT_TEMP_PATH.iterdir()
+                                 if f.is_file() and f.suffix.lower() in (VIDEO_EXTS | SUB_EXTS)]
+                    else:
+                        print("A process has failed. Restarting...")
+                        restart()
                 else:
                     files = [f for f in DOWNLOAD_TEMP_PATH.iterdir()
                              if f.is_file() and f.suffix.lower() in (VIDEO_EXTS | SUB_EXTS)]

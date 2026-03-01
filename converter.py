@@ -379,12 +379,12 @@ def convert_all_videos():
     outp = Path(OUTPUT_FOLDER)
     if not inp.exists():
         print(f"❌ Input folder '{INPUT_FOLDER}' not found!")
-        return
+        return False
     outp.mkdir(parents=True, exist_ok=True)
     files = sorted([p for p in inp.iterdir() if p.suffix.lower() in VIDEO_EXTS])
     if not files:
         print("❌ No video files found")
-        return
+        return False
 
     encoder, enc_name = detect_hardware_encoder()
     print("="*60)
@@ -434,6 +434,8 @@ def convert_all_videos():
     print(f"Done. ✅ {ok}  ❌ {failed}  ⏭️ {skipped}")
     print("="*60)
 
+    return True
+
 def convert_videos(input_path, output_path):
     global INPUT_FOLDER, OUTPUT_FOLDER
 
@@ -444,11 +446,15 @@ def convert_videos(input_path, output_path):
     OUTPUT_FOLDER = str(output_path)
 
     try:
-        convert_all_videos()
+        result = convert_all_videos()
 
-        files = [f for f in Path(INPUT_FOLDER).iterdir() if f.is_file()]
-        for file in files:
-            move(file, Path(OUTPUT_FOLDER) / file.name)
+        if result:
+            files = [f for f in Path(INPUT_FOLDER).iterdir() if f.is_file()]
+            for file in files:
+                move(file, Path(OUTPUT_FOLDER) / file.name)
+            return True
+        else:
+            return False
     finally:
         INPUT_FOLDER = old_input
         OUTPUT_FOLDER = old_output

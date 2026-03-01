@@ -81,7 +81,7 @@ def set_cookies_from_browser(value: str):
 set_cookies_from_browser(COOKIES_FROM_BROWSER)
 
 def convert(input_path: str, output_path: str):
-    convert_videos(input_path, output_path)
+    return convert_videos(input_path, output_path)
 
 
 def move(src, dst, buffer_size=1024 * 1024):
