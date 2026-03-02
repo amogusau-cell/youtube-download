@@ -2,6 +2,7 @@ import random
 import subprocess
 import json
 import sys
+import signal
 
 from tqdm import tqdm
 from pathlib import Path
@@ -21,6 +22,7 @@ DOWNLOAD = True
 CONVERT_VIDEOS = True
 COOKIES_FROM_BROWSER = "chrome:cookies.txt"
 RESTART_IF_FAILED = True
+INTERRUPTED = False
 
 PLAYLIST_URL = "https://www.youtube.com/playlist?list=PLYUI88BNN3JK_0HGANZP914caQLN2Sy56"
 
@@ -63,9 +65,15 @@ def get_index_from_title(title, videos):
     return None
 
 def restart():
-    if RESTART_IF_FAILED:
+    if RESTART_IF_FAILED and not INTERRUPTED:
         subprocess.Popen([sys.executable] + sys.argv)
-        sys.exit()
+    sys.exit(130 if INTERRUPTED else 1)
+
+
+def _handle_sigint(signum, frame):
+    global INTERRUPTED
+    INTERRUPTED = True
+    signal.default_int_handler(signum, frame)
 
 
 def get_video_duration(video_path):
@@ -143,6 +151,7 @@ def check_download(path: Path, filename: str):
 
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, _handle_sigint)
     playlist_opts = {
         **COMMON_YDL_OPTS,
         "extract_flat": True
